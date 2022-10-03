@@ -19,7 +19,7 @@ import {
   useColorModeValue
 } from '@chakra-ui/react';
 import { BsFillMoonStarsFill, BsFillSunFill } from 'react-icons/bs';
-import { dependencies, products } from '../config';
+import { osmoContracts } from '../config';
 
 import { WalletStatus } from '@cosmos-kit/core';
 import { Product, Dependency, WalletSection } from '../components';
@@ -27,9 +27,13 @@ import Head from 'next/head';
 import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate';
 import { Coin } from "cosmwasm";
 
+import { junoContracts } from '../config';
+import { BalanceResponse } from '../codegen/MeshLockup.types';
+import { MeshLockupClient } from '../codegen/MeshLockup.client';
 
 const chainName = 'osmosistestnet';
 const denom = 'uosmo';
+
 
 const chainassets: AssetList = assets.find(
   (chain) => chain.chain_name === chainName
@@ -79,6 +83,20 @@ export default function Home() {
     }
   }, [client, address]);
 
+  const [bonded, setBonded] = useState<BalanceResponse | null>(null);
+  useEffect(() => {
+    if (client && address) { updateBond(client, address); }
+  }, [client, address]);
+  const updateBond = (client: SigningCosmWasmClient, address: string) => {
+    const lockupClient = new MeshLockupClient(client, address, osmoContracts.meshLockupAddr);
+    lockupClient.balance({account: address}).then(setBonded).catch(() => setBonded({
+      bonded: "0",
+      free: "0",
+      claims: [],
+    }));
+  }
+
+
   return (
     <Container maxW="5xl" py={10}>
       <Head>
@@ -110,12 +128,6 @@ export default function Home() {
         </Heading>
       </Box>
       <WalletSection chainName={chainName} />
-      <div>
-        {denom} Balance:{' '}
-        {walletStatus === WalletStatus.Disconnected
-        ? 'Connect wallet!'
-        : bal?.amount ?? 'loading...'}
-        </div>
 
         {walletStatus === WalletStatus.Disconnected && (
         <Box textAlign="center">
@@ -129,6 +141,20 @@ export default function Home() {
         </Heading>
         </Box>
         )}
+
+        {walletStatus !== WalletStatus.Disconnected && (
+          <div>
+                <div>
+                Available Balance:{' '}
+                 {bal?.amount ?? 'loading...'} {denom} 
+                </div>
+                <div>
+                Lockup: {bonded ? `${bonded.free} free / ${bonded.bonded} bonded`: 'loading...'}
+                </div>
+          </div>
+        )}
+
+
 
     </Container>
   );

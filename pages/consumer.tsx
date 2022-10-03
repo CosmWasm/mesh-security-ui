@@ -19,13 +19,13 @@ import {
   useColorModeValue
 } from '@chakra-ui/react';
 import { BsFillMoonStarsFill, BsFillSunFill } from 'react-icons/bs';
-import { dependencies, products } from '../config';
 
 import { WalletStatus } from '@cosmos-kit/core';
 import { Product, Dependency, WalletSection } from '../components';
 import Head from 'next/head';
 import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate';
 import { Coin } from "cosmwasm";
+
 
 const chainName = 'junotestnet';
 const denom = 'ujunox';
@@ -63,12 +63,14 @@ export default function Home() {
   useEffect(() => {
     getCosmWasmClient().then((cosmwasmClient) => {
       if (!cosmwasmClient || !address) {
-        console.error('stargateClient undefined or address undefined.');
+        console.error('cosmwasmClient undefined or address undefined.');
         return;
       }
+      console.info('set client successfully');
       setClient(cosmwasmClient);
     });
   }, [address, getCosmWasmClient]);
+
   const [bal, setBal] = useState<Coin | null>(null);
   useEffect(() => {
     if (client && address) {
