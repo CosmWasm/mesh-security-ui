@@ -88,6 +88,19 @@ export default function Home() {
   useEffect(() => {
     if (client && address) { updateBond(client, address); }
   }, [client, address]);
+  const updateBond = async (client: SigningCosmWasmClient, address: string) => {
+    const lockupClient = new MeshLockupClient(client, address, osmoContracts.meshLockupAddr);
+    try {
+      const b = await lockupClient.balance({account: address});
+      setBonded(b);
+    } catch (e) {
+      setBonded({
+        bonded: "0",
+        free: "0",
+        claims: [],
+      });
+    }
+  }
 
   const [vals, setVals] = useState<ValidatorResponse[]>([]);
   useEffect(() => {
@@ -102,19 +115,6 @@ export default function Home() {
   }, [client, address]);
 
 
-  const updateBond = async (client: SigningCosmWasmClient, address: string) => {
-    const lockupClient = new MeshLockupClient(client, address, osmoContracts.meshLockupAddr);
-    try {
-      const b = await lockupClient.balance({account: address});
-      setBonded(b);
-    } catch (e) {
-      setBonded({
-        bonded: "0",
-        free: "0",
-        claims: [],
-      });
-    }
-  }
 
   const doBond = async () => {
     if (!client || !address) {
@@ -131,11 +131,26 @@ export default function Home() {
       console.error('client or address undefined.');
       return;
     }
+    console.log(`Staking to ${validator}`);
     const stakeTokens = async () => {
       const lockupClient = new MeshLockupClient(client, address, osmoContracts.meshLockupAddr);
       await lockupClient.grantClaim({amount: "1000000", leinholder: osmoContracts.meshProviderAddr, validator}, "auto");
+      await updateBond(client, address);
     }
     stakeTokens();
+  }
+
+  const doUnstake = async (validator: string) => {
+    if (!client || !address) {
+      console.error('client or address undefined.');
+      return;
+    }
+    console.log(`Unstaking from ${validator}`);
+    const unstakeTokens = async () => {
+      const providerClient = new MeshProviderClient(client, address, osmoContracts.meshProviderAddr);
+      await providerClient.unstake({validator, amount: "900000"});
+    }
+    unstakeTokens();
   }
 
   return (
@@ -201,7 +216,7 @@ export default function Home() {
         <div>
           <p>Select a validator:</p>
           <ul>
-            { vals.map((v, i) => (<li key={i}>{v.address}: {client ? <Button onClick={() => doStake(v.address)}>Stake 1 OSMO</Button> : ""}</li>))}
+            { vals.map((v, i) => (<li key={i}>{v.address}: {client ? <Button onClick={() => doStake(v.address)}>Stake 1 OSMO</Button> : ""} {client ? <Button onClick={() => doUnstake(v.address)}>Unstake 0.9 OSMO</Button> : ""}</li>))}
           </ul>
         </div>
 

@@ -25,7 +25,10 @@ import { Product, Dependency, WalletSection } from '../components';
 import Head from 'next/head';
 import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate';
 import { Coin } from "cosmwasm";
+import { junoContracts } from '../config';
 
+import { Delegation } from '../codegen/MetaStaking.types';
+import { MetaStakingClient } from '../codegen/MetaStaking.client';
 
 const chainName = 'junotestnet';
 const denom = 'ujunox';
@@ -62,12 +65,12 @@ export default function Home() {
 
   useEffect(() => {
     getCosmWasmClient().then((cosmwasmClient) => {
-      if (!cosmwasmClient || !address) {
+        if (!cosmwasmClient || !address) {
         console.error('cosmwasmClient undefined or address undefined.');
         return;
-      }
-      console.info('set client successfully');
-      setClient(cosmwasmClient);
+        }
+        console.info('set client successfully');
+        setClient(cosmwasmClient);
     });
   }, [address, getCosmWasmClient]);
 
@@ -75,10 +78,26 @@ export default function Home() {
   useEffect(() => {
     if (client && address) {
       client
-        .getBalance(address, denom)
+        .getBalance(junoContracts.metaStakingAddr, denom)
         .then((b) => setBal(b));
     }
   }, [client, address]);
+
+  const [delegations, setDelegations] = useState<Delegation[]>([]);
+  useEffect(() => {
+    updateDelegations(client, address);
+  }, [client, address]);
+  const updateDelegations = async (client?: SigningCosmWasmClient | null, address?: string | null) => {
+    if (!client || !address) { 
+        console.log("client missing");
+        return; 
+    }
+    console.log("got client");
+    const stakingClient = new MetaStakingClient(client, address, junoContracts.metaStakingAddr);
+    const { delegations } = await stakingClient.allDelegations({consumer: junoContracts.meshConsumerAddr});
+    setDelegations(delegations);
+  };
+
 
   return (
     <Container maxW="5xl" py={10}>
@@ -112,7 +131,7 @@ export default function Home() {
       </Box>
       <WalletSection chainName={chainName} />
       <div>
-        {denom} Balance:{' '}
+        {denom} Meta Staking @ {junoContracts.metaStakingAddr} :
         {walletStatus === WalletStatus.Disconnected
         ? 'Connect wallet!'
         : bal?.amount ?? 'loading...'}
@@ -130,6 +149,19 @@ export default function Home() {
         </Heading>
         </Box>
         )}
+
+          <div>
+                <Heading>
+                    Existing Delegations
+                </Heading>
+                <Button onClick={() => updateDelegations(client, address)}>
+                  Refresh
+                </Button>
+                <ul>
+                    { delegations.map((d, i) => (<li key={i}>{d.validator}: {d.amount.amount}</li>))}
+                </ul>
+          </div>
+
 
     </Container>
   );
