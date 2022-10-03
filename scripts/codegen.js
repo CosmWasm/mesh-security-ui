@@ -6,7 +6,27 @@ const contracts = [
   {
     name: 'HackCw20',
     dir: join(contractsDir, 'cw20-base')
-  }
+  },
+  {
+    name: 'MeshConsumer',
+    dir: join(contractsDir, 'mesh-consumer')
+  },
+  {
+    name: 'MeshLockup',
+    dir: join(contractsDir, 'mesh-lockup')
+  },
+  {
+    name: 'MeshProvider',
+    dir: join(contractsDir, 'mesh-provider')
+  },
+  {
+    name: 'MeshSlasher',
+    dir: join(contractsDir, 'mesh-slasher')
+  },
+  {
+    name: 'MetaStaking',
+    dir: join(contractsDir, 'meta-staking')
+  },
 ];
 
 codegen({

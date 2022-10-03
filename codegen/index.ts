@@ -6,8 +6,33 @@
 
 import * as _0 from "./HackCw20.types";
 import * as _1 from "./HackCw20.client";
+import * as _2 from "./MeshConsumer.types";
+import * as _3 from "./MeshConsumer.client";
+import * as _4 from "./MeshLockup.types";
+import * as _5 from "./MeshLockup.client";
+import * as _6 from "./MeshProvider.types";
+import * as _7 from "./MeshProvider.client";
+import * as _8 from "./MeshSlasher.types";
+import * as _9 from "./MeshSlasher.client";
+import * as _10 from "./MetaStaking.types";
+import * as _11 from "./MetaStaking.client";
 export namespace contracts {
   export const HackCw20 = { ..._0,
     ..._1
+  };
+  export const MeshConsumer = { ..._2,
+    ..._3
+  };
+  export const MeshLockup = { ..._4,
+    ..._5
+  };
+  export const MeshProvider = { ..._6,
+    ..._7
+  };
+  export const MeshSlasher = { ..._8,
+    ..._9
+  };
+  export const MetaStaking = { ..._10,
+    ..._11
   };
 }
