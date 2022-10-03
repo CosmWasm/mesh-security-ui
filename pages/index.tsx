@@ -34,10 +34,10 @@ const library = {
 };
 
 // const chainName = 'osmosis';
-// const chainName = 'osmosistestnet';
-// const denom = 'uosmo';
-const chainName = 'junotestnet';
-const denom = 'ujunox';
+const chainName = 'osmosistestnet';
+const denom = 'uosmo';
+// const chainName = 'junotestnet';
+// const denom = 'ujunox';
 
 const chainassets: AssetList = assets.find(
   (chain) => chain.chain_name === chainName
