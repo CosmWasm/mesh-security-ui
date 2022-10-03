@@ -27,6 +27,8 @@ import { dependencies, products } from '../config';
 import { WalletStatus } from '@cosmos-kit/core';
 import { Product, Dependency, WalletSection } from '../components';
 import Head from 'next/head';
+import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate';
+import { Coin } from "cosmwasm";
 
 const library = {
   title: 'OsmoJS',
@@ -35,12 +37,16 @@ const library = {
 };
 
 // const chainName = 'osmosis';
-const chainName = 'osmosistestnet';
+// const chainName = 'osmosistestnet';
+// const denom = 'uosmo';
+const chainName = 'junotestnet';
+const denom = 'ujunox';
+
 const chainassets: AssetList = assets.find(
   (chain) => chain.chain_name === chainName
 ) as AssetList;
 const coin: Asset = chainassets.assets.find(
-  (asset) => asset.base === 'uosmo'
+  (asset) => asset.base === denom
 ) as Asset;
 
 export default function Home() {
@@ -62,35 +68,27 @@ export default function Home() {
   const color = useColorModeValue('primary.500', 'primary.200');
 
   // get cw20 balance
-  const [cw20Client, setCw20Client] = useState<HackCw20QueryClient | null>(
+  const [client, setClient] = useState<SigningCosmWasmClient | null>(
     null
   );
+
   useEffect(() => {
     getCosmWasmClient().then((cosmwasmClient) => {
       if (!cosmwasmClient || !address) {
         console.error('stargateClient undefined or address undefined.');
         return;
       }
-
-      setCw20Client(
-        new HackCw20QueryClient(
-          cosmwasmClient,
-          'osmo1y0ywcujptlmnx4fgstlqfp7nftc8w5qndsfds9wxwtm0ltjpzp4qdj09j8'
-        )
-      );
+      setClient(cosmwasmClient);
     });
   }, [address, getCosmWasmClient]);
-  const [cw20Bal, setCw20Bal] = useState<string | null>(null);
+  const [bal, setBal] = useState<Coin | null>(null);
   useEffect(() => {
-    if (cw20Client && address) {
-      cw20Client
-        .balance({
-          // TODO: replace with `address` !!!
-          address: 'osmo10vcqfvecwmvfr46cn0ju024xz7khutjtdsg5ga'
-        })
-        .then((b) => setCw20Bal(b.balance));
+    if (client && address) {
+      client
+        .getBalance(address, denom)
+        .then((b) => setBal(b));
     }
-  }, [cw20Client, address]);
+  }, [client, address]);
 
   return (
     <Container maxW="5xl" py={10}>
@@ -132,10 +130,10 @@ export default function Home() {
       <WalletSection chainName={chainName} />
 
       <div>
-        HackCW20 Balance:{' '}
+        {denom} Balance:{' '}
         {walletStatus === WalletStatus.Disconnected
           ? 'Connect wallet!'
-          : cw20Bal ?? 'loading...'}
+          : bal?.amount ?? 'loading...'}
       </div>
 
       {walletStatus === WalletStatus.Disconnected && (
