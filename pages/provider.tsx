@@ -27,9 +27,10 @@ import Head from 'next/head';
 import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate';
 import { Coin } from "cosmwasm";
 
-import { junoContracts } from '../config';
 import { BalanceResponse } from '../codegen/MeshLockup.types';
 import { MeshLockupClient } from '../codegen/MeshLockup.client';
+import { ValidatorResponse } from '../codegen/MeshProvider.types';
+import { MeshProviderClient } from '../codegen/MeshProvider.client';
 
 const chainName = 'osmosistestnet';
 const denom = 'uosmo';
@@ -88,6 +89,19 @@ export default function Home() {
     if (client && address) { updateBond(client, address); }
   }, [client, address]);
 
+  const [vals, setVals] = useState<ValidatorResponse[]>([]);
+  useEffect(() => {
+    if (client && address) { 
+      const updateVals = async () => {
+        const providerClient = new MeshProviderClient(client, address, osmoContracts.meshProviderAddr);
+        const { validators } = await providerClient.listValidators({});
+        setVals(validators);
+      }
+      updateVals();
+    }
+  }, [client, address]);
+
+
   const updateBond = async (client: SigningCosmWasmClient, address: string) => {
     const lockupClient = new MeshLockupClient(client, address, osmoContracts.meshLockupAddr);
     try {
@@ -112,6 +126,17 @@ export default function Home() {
     await updateBond(client, address);
   }
 
+  const doStake = async (validator: string) => {
+    if (!client || !address) {
+      console.error('client or address undefined.');
+      return;
+    }
+    const stakeTokens = async () => {
+      const lockupClient = new MeshLockupClient(client, address, osmoContracts.meshLockupAddr);
+      await lockupClient.grantClaim({amount: "1000000", leinholder: osmoContracts.meshProviderAddr, validator}, "auto");
+    }
+    stakeTokens();
+  }
 
   return (
     <Container maxW="5xl" py={10}>
@@ -172,6 +197,13 @@ export default function Home() {
                 </Button>
           </div>
         )}
+
+        <div>
+          <p>Select a validator:</p>
+          <ul>
+            { vals.map((v, i) => (<li key={i}>{v.address}: {client ? <Button onClick={() => doStake(v.address)}>Stake 1 OSMO</Button> : ""}</li>))}
+          </ul>
+        </div>
 
 
 
