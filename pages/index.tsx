@@ -27,65 +27,47 @@ import Head from 'next/head';
 import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate';
 import { Coin } from "cosmwasm";
 
-const library = {
-  title: 'OsmoJS',
-  text: 'OsmoJS',
-  href: 'https://github.com/osmosis-labs/osmojs'
-};
-
-// const chainName = 'osmosis';
-const chainName = 'osmosistestnet';
-const denom = 'uosmo';
-// const chainName = 'junotestnet';
-// const denom = 'ujunox';
-
-const chainassets: AssetList = assets.find(
-  (chain) => chain.chain_name === chainName
-) as AssetList;
-const coin: Asset = chainassets.assets.find(
-  (asset) => asset.base === denom
-) as Asset;
-
 export default function Home() {
   const { colorMode, toggleColorMode } = useColorMode();
-
-  const {
-    getStargateClient,
-    getCosmWasmClient,
-    address,
-    setCurrentChain,
-    currentWallet,
-    walletStatus
-  } = useWallet();
-
-  useEffect(() => {
-    setCurrentChain(chainName);
-  }, [chainName]);
-
   const color = useColorModeValue('primary.500', 'primary.200');
 
-  // get cw20 balance
-  const [client, setClient] = useState<SigningCosmWasmClient | null>(
-    null
-  );
+  // const {
+  //   getStargateClient,
+  //   getCosmWasmClient,
+  //   address,
+  //   setCurrentChain,
+  //   currentWallet,
+  //   walletStatus
+  // } = useWallet();
 
-  useEffect(() => {
-    getCosmWasmClient().then((cosmwasmClient) => {
-      if (!cosmwasmClient || !address) {
-        console.error('stargateClient undefined or address undefined.');
-        return;
-      }
-      setClient(cosmwasmClient);
-    });
-  }, [address, getCosmWasmClient]);
-  const [bal, setBal] = useState<Coin | null>(null);
-  useEffect(() => {
-    if (client && address) {
-      client
-        .getBalance(address, denom)
-        .then((b) => setBal(b));
-    }
-  }, [client, address]);
+  // useEffect(() => {
+  //   setCurrentChain(chainName);
+  // }, [chainName]);
+
+  // const color = useColorModeValue('primary.500', 'primary.200');
+
+  // // get cw20 balance
+  // const [client, setClient] = useState<SigningCosmWasmClient | null>(
+  //   null
+  // );
+
+  // useEffect(() => {
+  //   getCosmWasmClient().then((cosmwasmClient) => {
+  //     if (!cosmwasmClient || !address) {
+  //       console.error('stargateClient undefined or address undefined.');
+  //       return;
+  //     }
+  //     setClient(cosmwasmClient);
+  //   });
+  // }, [address, getCosmWasmClient]);
+  // const [bal, setBal] = useState<Coin | null>(null);
+  // useEffect(() => {
+  //   if (client && address) {
+  //     client
+  //       .getBalance(address, denom)
+  //       .then((b) => setBal(b));
+  //   }
+  // }, [client, address]);
 
   return (
     <Container maxW="5xl" py={10}>
@@ -121,35 +103,20 @@ export default function Home() {
           </Text>
         </Heading>
       </Box>
-      <WalletSection chainName={chainName} />
-
-      <div>
-        {denom} Balance:{' '}
-        {walletStatus === WalletStatus.Disconnected
-          ? 'Connect wallet!'
-          : bal?.amount ?? 'loading...'}
-      </div>
-
-      {walletStatus === WalletStatus.Disconnected && (
-        <Box textAlign="center">
-          <Heading
-            as="h3"
-            fontSize={{ base: '1xl', sm: '2xl', md: '2xl' }}
-            fontWeight="extrabold"
-            m={30}
-          >
-            Connect your wallet!
-          </Heading>
-        </Box>
-      )}
 
       <Box mb={3}>
         <Divider />
       </Box>
 
+      <Grid templateColumns={{ md: '1fr 1fr' }} gap={8} mb={20}>
+        <Product title="Osmosis Provider" text="Provider cross chain security from Osmosis" href="/provider" />
+        <Product title="Juno Consumer" text="Receive cross chain security on Juno" href="/consumer" />
+      </Grid>
+
       <Box mb={3}>
         <Divider />
       </Box>
+      
       <Stack
         isInline={true}
         spacing={1}
