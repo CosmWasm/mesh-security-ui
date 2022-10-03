@@ -2132,10 +2132,10 @@
     "@cosmos-kit/core" "^0.16.2"
     "@cosmos-kit/keplr" "^0.16.2"
 
-"@cosmos-kit/core@0.18.0":
-  version "0.18.0"
-  resolved "https://registry.yarnpkg.com/@cosmos-kit/core/-/core-0.18.0.tgz#c7da8c31793a130691a2401f292cef4121d34001"
-  integrity sha512-zJdA+BTiuLea2oe1TiwOZ8hH9v95EmDK6ZGm+oyPOIoEvtpH84kN8B2RNjwR0vhjFoB5VrnmDVuGwkK1WS8mbw==
+"@cosmos-kit/core@0.19.0", "@cosmos-kit/core@^0.19.0":
+  version "0.19.0"
+  resolved "https://registry.yarnpkg.com/@cosmos-kit/core/-/core-0.19.0.tgz#df053f173aa6c3ca8419e61e1b7b0f67f6243a33"
+  integrity sha512-FNBgrIik20aWUbfL5P+A3hgR+alvKUjEU88OCrGX90jgSlJHCYrp50CYR0qSuRK/nq4QwP45Oo/8yTcnaMMrnA==
   dependencies:
     "@babel/runtime" "^7.11.2"
     "@chain-registry/types" "^0.11.0"
@@ -2150,25 +2150,16 @@
     "@chain-registry/types" "^0.11.0"
     chain-registry "^0.14.0"
 
-"@cosmos-kit/core@^0.18.0":
-  version "0.18.1"
-  resolved "https://registry.yarnpkg.com/@cosmos-kit/core/-/core-0.18.1.tgz#4596192bd3792e558922585d623f195f667bbceb"
-  integrity sha512-5uX4z8cb37jq1Y2zD/oGBt//PpIhvKu0iv/U8HHkaZMHiy6vupmNKjBs0jEEolVak1H3oxEB0yTNzPpBaJwuIg==
-  dependencies:
-    "@babel/runtime" "^7.11.2"
-    "@chain-registry/types" "^0.11.0"
-    chain-registry "^0.14.0"
-
-"@cosmos-kit/keplr@0.18.0":
-  version "0.18.0"
-  resolved "https://registry.yarnpkg.com/@cosmos-kit/keplr/-/keplr-0.18.0.tgz#176315f84626e69cd76d621e3099e152eb4c5930"
-  integrity sha512-ko8+lcF07hExKwhbIvVAPc0vcl5R4Bi0CmOs2WQZjoKkgApBYH987dXRjYEBQFBy6NbaKOiBFNTksDMFC/QVWA==
+"@cosmos-kit/keplr@0.19.0":
+  version "0.19.0"
+  resolved "https://registry.yarnpkg.com/@cosmos-kit/keplr/-/keplr-0.19.0.tgz#d50f2d109f0015b787a569b3aaf38427c253669c"
+  integrity sha512-eUNDaUGwfrR5fp4xAFTfxWO7aREVyEv2G+R+0tFnvZOddZbMBs9EpiPLgUzDq3BNuKrVQE7GybeKs7zkRPO0Ag==
   dependencies:
     "@babel/runtime" "^7.11.2"
     "@chain-registry/keplr" "1.0.0"
     "@chain-registry/types" "^0.11.0"
     "@chakra-ui/react" "^2.2.9"
-    "@cosmos-kit/core" "^0.18.0"
+    "@cosmos-kit/core" "^0.19.0"
     "@emotion/react" "^11"
     "@emotion/styled" "^11"
     "@keplr-wallet/types" "^0.11.3"
@@ -2199,10 +2190,10 @@
     react-dom "18.2.0"
     react-icons "^4.4.0"
 
-"@cosmos-kit/react@0.18.0":
-  version "0.18.0"
-  resolved "https://registry.yarnpkg.com/@cosmos-kit/react/-/react-0.18.0.tgz#05ef43f6f179d624562aa2f3d88de7c6bcfda041"
-  integrity sha512-rqVHYsm4dLfnGV3/Dy0qm3EKed7cWw0CFrICVgjvpKUrY27/0dPpS2dydri2VQ36Odm+rJ/bOdRi3tElLYoQFw==
+"@cosmos-kit/react@0.18.1":
+  version "0.18.1"
+  resolved "https://registry.yarnpkg.com/@cosmos-kit/react/-/react-0.18.1.tgz#8aa52ad1501063d3a9407968d73807244838f1b8"
+  integrity sha512-CoiD7l5R7AUutW00OPlFTWi0NGlKoJfX9YPZZ+Cpn4M47mjmw6MTDoqtSEZa44zb36r+JYp6QUbckMPg4mTVDw==
   dependencies:
     "@babel/runtime" "^7.11.2"
     "@chain-registry/types" "^0.11.0"

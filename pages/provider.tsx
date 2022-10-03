@@ -34,7 +34,6 @@ import { MeshLockupClient } from '../codegen/MeshLockup.client';
 const chainName = 'osmosistestnet';
 const denom = 'uosmo';
 
-
 const chainassets: AssetList = assets.find(
   (chain) => chain.chain_name === chainName
 ) as AssetList;
@@ -55,6 +54,7 @@ export default function Home() {
   } = useWallet();
 
   useEffect(() => {
+    console.log(`current: ${chainName}`);
     setCurrentChain(chainName);
   }, [setCurrentChain]);
 
@@ -87,13 +87,29 @@ export default function Home() {
   useEffect(() => {
     if (client && address) { updateBond(client, address); }
   }, [client, address]);
-  const updateBond = (client: SigningCosmWasmClient, address: string) => {
+
+  const updateBond = async (client: SigningCosmWasmClient, address: string) => {
     const lockupClient = new MeshLockupClient(client, address, osmoContracts.meshLockupAddr);
-    lockupClient.balance({account: address}).then(setBonded).catch(() => setBonded({
-      bonded: "0",
-      free: "0",
-      claims: [],
-    }));
+    try {
+      const b = await lockupClient.balance({account: address});
+      setBonded(b);
+    } catch (e) {
+      setBonded({
+        bonded: "0",
+        free: "0",
+        claims: [],
+      });
+    }
+  }
+
+  const doBond = async () => {
+    if (!client || !address) {
+      console.error('client or address undefined.');
+      return;
+    }
+    const lockupClient = new MeshLockupClient(client, address, osmoContracts.meshLockupAddr);
+    await lockupClient.bond("auto", undefined, [{amount: "1000000", denom: "uosmo"}]);
+    await updateBond(client, address);
   }
 
 
@@ -149,8 +165,11 @@ export default function Home() {
                  {bal?.amount ?? 'loading...'} {denom} 
                 </div>
                 <div>
-                Lockup: {bonded ? `${bonded.free} free / ${bonded.bonded} bonded`: 'loading...'}
+                Lockup: {bonded ? `${bonded.free} free / ${bonded.bonded} bonded ${denom}`: 'loading...'}
                 </div>
+                <Button onClick={doBond}>
+                  Bond 1 OSMO
+                </Button>
           </div>
         )}
 

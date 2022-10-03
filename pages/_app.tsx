@@ -20,10 +20,19 @@ function CreateCosmosApp({ Component, pageProps }: AppProps) {
       switch (chain.chain_name) {
         case 'osmosis':
         case 'osmosistestnet':
+          console.log('got osmosis');
           return {
             gasPrice: GasPrice.fromString('0.0025uosmo')
           };
-      }
+        case 'juno':
+          return {
+            gasPrice: GasPrice.fromString('0.0025ujuno')
+          };
+        case 'junotestnet':
+            return {
+              gasPrice: GasPrice.fromString('0.0025ujunox')
+            };
+        }
     }
   };
 
