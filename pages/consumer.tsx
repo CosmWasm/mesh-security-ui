@@ -1,7 +1,7 @@
-import { useEffect, useState, useMemo } from 'react';
-import { useWallet } from '@cosmos-kit/react';
-import { assets } from 'chain-registry';
-import { AssetList, Asset } from '@chain-registry/types';
+import { useEffect, useState, useMemo } from 'react'
+import { useWallet } from '@cosmos-kit/react'
+import { assets } from 'chain-registry'
+import { AssetList, Asset } from '@chain-registry/types'
 
 import {
   Box,
@@ -16,32 +16,32 @@ import {
   Flex,
   Icon,
   useColorMode,
-  useColorModeValue
-} from '@chakra-ui/react';
-import { BsFillMoonStarsFill, BsFillSunFill } from 'react-icons/bs';
+  useColorModeValue,
+} from '@chakra-ui/react'
+import { BsFillMoonStarsFill, BsFillSunFill } from 'react-icons/bs'
 
-import { WalletStatus } from '@cosmos-kit/core';
-import { Product, Dependency, WalletSection } from '../components';
-import Head from 'next/head';
-import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate';
-import { Coin } from "cosmwasm";
-import { junoContracts } from '../config';
+import { WalletStatus } from '@cosmos-kit/core'
+import { Product, Dependency, WalletSection } from '../components'
+import Head from 'next/head'
+import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate'
+import { Coin } from 'cosmwasm'
+import { junoContracts } from '../config'
 
-import { Delegation } from '../codegen/MetaStaking.types';
-import { MetaStakingClient } from '../codegen/MetaStaking.client';
+import { Delegation } from '../codegen/MetaStaking.types'
+import { MetaStakingClient } from '../codegen/MetaStaking.client'
 
-const chainName = 'junotestnet';
-const denom = 'ujunox';
+const chainName = 'junotestnet'
+const denom = 'ujunox'
 
 const chainassets: AssetList = assets.find(
-  (chain) => chain.chain_name === chainName
-) as AssetList;
+  (chain) => chain.chain_name === chainName,
+) as AssetList
 const coin: Asset = chainassets.assets.find(
-  (asset) => asset.base === denom
-) as Asset;
+  (asset) => asset.base === denom,
+) as Asset
 
 export default function Home() {
-  const { colorMode, toggleColorMode } = useColorMode();
+  const { colorMode, toggleColorMode } = useColorMode()
 
   const {
     getStargateClient,
@@ -49,55 +49,61 @@ export default function Home() {
     address,
     setCurrentChain,
     currentWallet,
-    walletStatus
-  } = useWallet();
+    walletStatus,
+  } = useWallet()
 
   useEffect(() => {
-    setCurrentChain(chainName);
-  }, [chainName]);
+    setCurrentChain(chainName)
+  }, [chainName])
 
-  const color = useColorModeValue('primary.500', 'primary.200');
+  const color = useColorModeValue('primary.500', 'primary.200')
 
   // get cw20 balance
-  const [client, setClient] = useState<SigningCosmWasmClient | null>(
-    null
-  );
+  const [client, setClient] = useState<SigningCosmWasmClient | null>(null)
 
   useEffect(() => {
     getCosmWasmClient().then((cosmwasmClient) => {
-        if (!cosmwasmClient || !address) {
-        console.error('cosmwasmClient undefined or address undefined.');
-        return;
-        }
-        console.info('set client successfully');
-        setClient(cosmwasmClient);
-    });
-  }, [address, getCosmWasmClient]);
+      if (!cosmwasmClient || !address) {
+        console.error('cosmwasmClient undefined or address undefined.')
+        return
+      }
+      console.info('set client successfully')
+      setClient(cosmwasmClient)
+    })
+  }, [address, getCosmWasmClient])
 
-  const [bal, setBal] = useState<Coin | null>(null);
+  const [bal, setBal] = useState<Coin | null>(null)
   useEffect(() => {
     if (client && address) {
       client
         .getBalance(junoContracts.metaStakingAddr, denom)
-        .then((b) => setBal(b));
+        .then((b) => setBal(b))
     }
-  }, [client, address]);
+  }, [client, address])
 
-  const [delegations, setDelegations] = useState<Delegation[]>([]);
+  const [delegations, setDelegations] = useState<Delegation[]>([])
   useEffect(() => {
-    updateDelegations(client, address);
-  }, [client, address]);
-  const updateDelegations = async (client?: SigningCosmWasmClient | null, address?: string | null) => {
-    if (!client || !address) { 
-        console.log("client missing");
-        return; 
+    updateDelegations(client, address)
+  }, [client, address])
+  const updateDelegations = async (
+    client?: SigningCosmWasmClient | null,
+    address?: string | null,
+  ) => {
+    if (!client || !address) {
+      console.log('client missing')
+      return
     }
-    console.log("got client");
-    const stakingClient = new MetaStakingClient(client, address, junoContracts.metaStakingAddr);
-    const { delegations } = await stakingClient.allDelegations({consumer: junoContracts.meshConsumerAddr});
-    setDelegations(delegations);
-  };
-
+    console.log('got client')
+    const stakingClient = new MetaStakingClient(
+      client,
+      address,
+      junoContracts.metaStakingAddr,
+    )
+    const { delegations } = await stakingClient.allDelegations({
+      consumer: junoContracts.meshConsumerAddr,
+    })
+    setDelegations(delegations)
+  }
 
   return (
     <Container maxW="5xl" py={10}>
@@ -106,13 +112,6 @@ export default function Home() {
         <meta name="description" content="Generated by create cosmos app" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Flex justifyContent="end" mb={4}>
-        <Button variant="outline" px={0} onClick={toggleColorMode}>
-          <Icon
-            as={colorMode === 'light' ? BsFillMoonStarsFill : BsFillSunFill}
-          />
-        </Button>
-      </Flex>
       <Box textAlign="center">
         <Heading
           as="h1"
@@ -126,47 +125,42 @@ export default function Home() {
           as="h1"
           fontWeight="bold"
           fontSize={{ base: '2xl', sm: '3xl', md: '4xl' }}
-        >
-        </Heading>
+        ></Heading>
       </Box>
       <WalletSection chainName={chainName} />
       <div>
         {denom} Meta Staking @ {junoContracts.metaStakingAddr} :
         {walletStatus === WalletStatus.Disconnected
-        ? 'Connect wallet!'
-        : bal?.amount ?? 'loading...'}
-        </div>
+          ? 'Connect wallet!'
+          : bal?.amount ?? 'loading...'}
+      </div>
 
-        {walletStatus === WalletStatus.Disconnected && (
+      {walletStatus === WalletStatus.Disconnected && (
         <Box textAlign="center">
-        <Heading
+          <Heading
             as="h3"
             fontSize={{ base: '1xl', sm: '2xl', md: '2xl' }}
             fontWeight="extrabold"
             m={30}
-        >
+          >
             Connect your wallet!
-        </Heading>
+          </Heading>
         </Box>
-        )}
+      )}
 
-          <div>
-                <Heading>
-                    Existing Delegations
-                </Heading>
-                <Button onClick={() => updateDelegations(client, address)}>
-                  Refresh
-                </Button>
-                <ul>
-                    { delegations.map((d, i) => (<li key={i}>{d.validator}: {d.amount.amount}</li>))}
-                </ul>
-          </div>
-
-
+      <div>
+        <Heading>Existing Delegations</Heading>
+        <Button onClick={() => updateDelegations(client, address)}>
+          Refresh
+        </Button>
+        <ul>
+          {delegations.map((d, i) => (
+            <li key={i}>
+              {d.validator}: {d.amount.amount}
+            </li>
+          ))}
+        </ul>
+      </div>
     </Container>
-  );
+  )
 }
-
-
-
-
