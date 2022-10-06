@@ -14,6 +14,7 @@ import Layout from 'components/Layout'
 import { MeshClientProvider } from 'client'
 import { Toaster } from 'react-hot-toast'
 import { TxProvider } from 'contexts/tx'
+import { useEffect } from 'react'
 
 function MeshSecurityApp({ Component, pageProps }: AppProps) {
   const signerOptions: SignerOptions = {
@@ -40,24 +41,28 @@ function MeshSecurityApp({ Component, pageProps }: AppProps) {
     },
   }
 
+  useEffect(() => {}, [])
+
   return (
-    <ChakraProvider theme={defaultTheme}>
-      <WalletProvider
-        chains={chains}
-        assetLists={assets}
-        wallets={wallets}
-        signerOptions={signerOptions}
-      >
-        <Toaster position="bottom-center" />
-        <MeshClientProvider>
-          <TxProvider>
-            <Layout>
-              <Component {...pageProps} />
-            </Layout>
-          </TxProvider>
-        </MeshClientProvider>
-      </WalletProvider>
-    </ChakraProvider>
+    <main className="dark">
+      <ChakraProvider theme={defaultTheme}>
+        <WalletProvider
+          chains={chains}
+          assetLists={assets}
+          wallets={wallets}
+          signerOptions={signerOptions}
+        >
+          <Toaster position="bottom-center" />
+          <MeshClientProvider>
+            <TxProvider>
+              <Layout>
+                <Component {...pageProps} />
+              </Layout>
+            </TxProvider>
+          </MeshClientProvider>
+        </WalletProvider>
+      </ChakraProvider>
+    </main>
   )
 }
 

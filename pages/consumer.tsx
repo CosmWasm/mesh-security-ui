@@ -21,7 +21,7 @@ import {
 import { BsFillMoonStarsFill, BsFillSunFill } from 'react-icons/bs'
 
 import { WalletStatus } from '@cosmos-kit/core'
-import { Product, Dependency, WalletSection } from '../components'
+import { Product, Dependency } from '../components'
 import Head from 'next/head'
 import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 import { Coin } from 'cosmwasm'

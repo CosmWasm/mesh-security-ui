@@ -45,7 +45,7 @@ export const WalletButton = ({
   } = walletManager
 
   useEffect(() => {
-    setCurrentChain(chainName)
+    if (chainName) setCurrentChain(chainName)
   }, [chainName, setCurrentChain])
 
   // Events

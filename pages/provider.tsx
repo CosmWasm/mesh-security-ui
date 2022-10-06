@@ -1,101 +1,47 @@
 import { useEffect, useState, useMemo } from 'react'
 import { useWallet } from '@cosmos-kit/react'
-import { assets } from 'chain-registry'
-import { AssetList, Asset } from '@chain-registry/types'
+import { chains } from 'chain-registry'
 
-import {
-  Box,
-  Divider,
-  Grid,
-  Heading,
-  Text,
-  Stack,
-  Container,
-  Link,
-  Button,
-  Flex,
-  Icon,
-  useColorMode,
-  useColorModeValue,
-} from '@chakra-ui/react'
-import { BsFillMoonStarsFill, BsFillSunFill } from 'react-icons/bs'
-import { osmoContracts } from '../config'
+import { Container } from '@chakra-ui/react'
 
 import { WalletStatus } from '@cosmos-kit/core'
-import { Product, Dependency, WalletSection } from '../components'
+import WalletButton from '../components/Wallet'
 import Head from 'next/head'
-import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate'
-import { Coin } from 'cosmwasm'
+import { humanizeAmount } from 'util/denom'
 
 import { BalanceResponse } from '../codegen/MeshLockup.types'
-import { MeshLockupClient } from '../codegen/MeshLockup.client'
 import { ValidatorResponse } from '../codegen/MeshProvider.types'
-import { MeshProviderClient } from '../codegen/MeshProvider.client'
 import Validator from '../components/Validator'
-
-const chainName = 'osmosistestnet'
-const denom = 'uosmo'
-
-const chainassets: AssetList = assets.find(
-  (chain) => chain.chain_name === chainName,
-) as AssetList
-const coin: Asset = chainassets.assets.find(
-  (asset) => asset.base === denom,
-) as Asset
+import { useMeshClient } from 'client'
+import { useTx } from 'contexts/tx'
+import { BanknotesIcon, LockClosedIcon } from '@heroicons/react/24/outline'
+import Spinner from 'components/Spinner'
 
 export default function Home() {
-  const { colorMode, toggleColorMode } = useColorMode()
+  const { client } = useMeshClient()
+  const { tx } = useTx()
 
-  const {
-    getStargateClient,
-    getCosmWasmClient,
-    address,
-    setCurrentChain,
-    currentWallet,
-    walletStatus,
-  } = useWallet()
+  const { address, currentWallet, walletStatus, currentChainName } = useWallet()
 
-  useEffect(() => {
-    console.log(`current: ${chainName}`)
-    setCurrentChain(chainName)
-  }, [setCurrentChain])
-
-  const color = useColorModeValue('primary.500', 'primary.200')
-
-  // get cw20 balance
-  const [client, setClient] = useState<SigningCosmWasmClient | null>(null)
-
-  useEffect(() => {
-    getCosmWasmClient().then((cosmwasmClient) => {
-      if (!cosmwasmClient || !address) {
-        console.error('cosmwasmClient undefined or address undefined.')
-        return
-      }
-      setClient(cosmwasmClient)
-    })
-  }, [address, getCosmWasmClient])
-  const [bal, setBal] = useState<Coin | null>(null)
-  useEffect(() => {
-    if (client && address) {
-      client.getBalance(address, denom).then((b) => setBal(b))
-    }
-  }, [client, address])
+  const chain = useMemo(
+    () => chains.find((c) => c.chain_name === currentChainName),
+    [currentChainName],
+  )
 
   const [bonded, setBonded] = useState<BalanceResponse | null>(null)
   useEffect(() => {
-    if (client && address) {
-      updateBond(client, address)
+    if (client?.signingCosmWasmClient && address) {
+      updateBond(address)
     }
-  }, [client, address])
-  const updateBond = async (client: SigningCosmWasmClient, address: string) => {
-    const lockupClient = new MeshLockupClient(
-      client,
-      address,
-      osmoContracts.meshLockupAddr,
-    )
+  }, [client?.signingCosmWasmClient, address])
+
+  const updateBond = async (address: string) => {
     try {
-      const b = await lockupClient.balance({ account: address })
-      setBonded(b)
+      await client?.connectSigning()
+      const bonded = await client?.meshLockupClient.balance({
+        account: address,
+      })!
+      setBonded(bonded)
     } catch (e) {
       setBonded({
         bonded: '0',
@@ -105,153 +51,81 @@ export default function Home() {
     }
   }
 
-  const [vals, setVals] = useState<ValidatorResponse[]>([])
+  const [validators, setValidators] = useState<ValidatorResponse[]>([])
   useEffect(() => {
-    if (client && address) {
-      const updateVals = async () => {
-        const providerClient = new MeshProviderClient(
-          client,
-          address,
-          osmoContracts.meshProviderAddr,
+    if (client?.meshProviderClient && address) {
+      const updateValidators = async () => {
+        const { validators } = await client?.meshProviderClient.listValidators(
+          {},
         )
-        const { validators } = await providerClient.listValidators({})
-        setVals(validators)
+        setValidators(validators)
       }
-      updateVals()
+      updateValidators()
     }
-  }, [client, address])
-
-  const doBond = async () => {
-    if (!client || !address) {
-      console.error('client or address undefined.')
-      return
-    }
-    const lockupClient = new MeshLockupClient(
-      client,
-      address,
-      osmoContracts.meshLockupAddr,
-    )
-    await lockupClient.bond('auto', undefined, [
-      { amount: '1000000', denom: 'uosmo' },
-    ])
-    await updateBond(client, address)
-  }
-
-  const doStake = async (validator: string) => {
-    if (!client || !address) {
-      console.error('client or address undefined.')
-      return
-    }
-    console.log(`Staking to ${validator}`)
-    const stakeTokens = async () => {
-      const lockupClient = new MeshLockupClient(
-        client,
-        address,
-        osmoContracts.meshLockupAddr,
-      )
-      await lockupClient.grantClaim(
-        {
-          amount: '1000000',
-          leinholder: osmoContracts.meshProviderAddr,
-          validator,
-        },
-        'auto',
-      )
-      await updateBond(client, address)
-    }
-    stakeTokens()
-  }
-
-  const doUnstake = async (validator: string) => {
-    if (!client || !address) {
-      console.error('client or address undefined.')
-      return
-    }
-    console.log(`Unstaking from ${validator}`)
-    const unstakeTokens = async () => {
-      const providerClient = new MeshProviderClient(
-        client,
-        address,
-        osmoContracts.meshProviderAddr,
-      )
-      await providerClient.unstake({ validator, amount: '900000' })
-    }
-    unstakeTokens()
-  }
+  }, [client?.meshProviderClient, address])
 
   return (
-    <Container maxW="5xl" py={10}>
+    <div className="max-w-5xl py-10 mx-auto">
       <Head>
         <title>Osmosis Provider - Mesh Security</title>
         <meta name="description" content="Generated by create cosmos app" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Box textAlign="center">
-        <Heading
-          as="h1"
-          fontSize={{ base: '3xl', sm: '4xl', md: '5xl' }}
-          fontWeight="extrabold"
-          mb={3}
-        >
+      <div className="pb-4 text-center">
+        <h1 className="mb-3 text-3xl font-extrabold sm:text-4xl md:text-5xl">
           Osmosis Provider
-        </Heading>
-        <Heading
-          as="h1"
-          fontWeight="bold"
-          fontSize={{ base: '2xl', sm: '3xl', md: '4xl' }}
-        ></Heading>
-      </Box>
-      <WalletSection chainName={chainName} />
+        </h1>
+      </div>
 
-      {walletStatus === WalletStatus.Disconnected && (
-        <Box textAlign="center">
-          <Heading
-            as="h3"
-            fontSize={{ base: '1xl', sm: '2xl', md: '2xl' }}
-            fontWeight="extrabold"
-            m={30}
-          >
-            Connect your wallet!
-          </Heading>
-        </Box>
+      {walletStatus !== WalletStatus.Connected && (
+        <div className="max-w-[14rem] mx-auto">
+          <WalletButton chainName={currentChainName} />
+        </div>
       )}
 
-      {walletStatus !== WalletStatus.Disconnected && (
-        <div>
-          <div>
-            Available Balance: {bal?.amount ?? 'loading...'} {denom}
+      {walletStatus === WalletStatus.Connected && (
+        <div className="flex flex-col justify-center p-2 mx-auto max-w-[24rem] space-y-2 border rounded-lg sm:flex-row sm:space-x-4 sm:space-y-0 border-black/10 dark:border-white/10">
+          <div className="flex flex-row items-center space-x-2">
+            <BanknotesIcon className="w-5 h-5 text-black dark:text-white" />
+            <p className="flex flex-row items-center font-medium uppercase">
+              {client?.wallet?.balance ? (
+                humanizeAmount(client?.wallet?.balance?.amount!)
+              ) : (
+                <Spinner className="w-4 h-4" />
+              )}{' '}
+              {chain?.bech32_prefix}
+            </p>
           </div>
-          <div>
-            Lockup:{' '}
-            {bonded
-              ? `${bonded.free} free / ${bonded.bonded} bonded ${denom}`
-              : 'loading...'}
+          <div className="flex flex-row items-center space-x-2">
+            <LockClosedIcon className="w-5 h-5 text-black dark:text-white" />
+            <p className="flex flex-row items-center font-medium uppercase">
+              {bonded ? (
+                humanizeAmount(bonded.bonded)
+              ) : (
+                <Spinner className="w-4 h-4" />
+              )}{' '}
+              {chain?.bech32_prefix}
+            </p>
           </div>
-          <Button onClick={doBond}>Bond 1 OSMO</Button>
         </div>
       )}
 
       <div>
-        <p>Select a validator:</p>
-        <div className="flex flex-col space-y-2 mt-4">
-          {vals.map(({ address }, key) => (
+        <div className="flex flex-col mt-4 space-y-2">
+          {validators.map(({ address }, key) => (
             <Validator
               key={key}
               address={address}
               actions={[
                 {
-                  name: 'Stake 1 OSMO',
-                  onClick: () => doStake(address),
-                },
-                {
-                  name: 'Unstake 0.9 OSMO',
-                  onClick: () => doUnstake(address),
+                  name: 'Manage',
+                  onClick: () => {},
                 },
               ]}
             />
           ))}
         </div>
       </div>
-    </Container>
+    </div>
   )
 }

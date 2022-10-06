@@ -8,7 +8,7 @@ const client = async (chainName: string) => {
   const chainData = chains.find((c) => c.chain_name === chainName)
   const chainDenom = denom.find((d) => d.chain === chainName)?.denom!
   const rpc = await getRpc(chainData?.apis?.rpc as RpcInfo[])
-  return new MeshClient({
+  const client = new MeshClient({
     wallet: null,
     signingCosmWasmClient: null,
     chain: {
@@ -17,6 +17,8 @@ const client = async (chainName: string) => {
       rpc: rpc as string,
     },
   })
+
+  return client
 }
 
 export default client

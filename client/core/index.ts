@@ -90,7 +90,9 @@ export class MeshClient {
   }
 
   public get cosmWasmClient(): CosmWasmClient {
-    return this._cosmWasmClient as CosmWasmClient
+    return (
+      this.signingCosmWasmClient || (this._cosmWasmClient as CosmWasmClient)
+    )
   }
 
   public get meshConsumerClient(): MeshConsumerQueryClient {

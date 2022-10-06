@@ -30,19 +30,15 @@ export default function MeshClientProvider({
       let signingCosmWasmClient, balance, chainDenom
       if (currentWallet) {
         signingCosmWasmClient = await currentWallet.getCosmWasmClient()
-        console.log(signingCosmWasmClient)
         chainDenom = denom.find((d) => d.chain === currentChainName)?.denom!
         balance = await signingCosmWasmClient?.getBalance(
           currentWallet?.address,
           chainDenom,
         )
+        console.log('FETCHED BALANCE', balance)
       }
 
-      console.log('Getting without wallet')
-
       const rpc = await getRpc(currentChain?.apis?.rpc as RpcInfo[])
-
-      console.log(rpc)
 
       const client = new MeshClient({
         wallet: currentWallet

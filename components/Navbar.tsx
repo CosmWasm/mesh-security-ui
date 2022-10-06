@@ -4,6 +4,7 @@ import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 import { classNames } from 'util/css'
 import { WalletButton } from './Wallet'
 import Link from 'next/link'
+import { useWallet } from '@cosmos-kit/react'
 
 export interface NavigationItem {
   name: string
@@ -52,7 +53,7 @@ export const Navbar = ({ navigation, defaultChain }: NavbarProps) => {
               <div className="flex items-center justify-center flex-1 sm:items-stretch sm:justify-start">
                 <div className="flex items-center flex-shrink-0 sm:pr-6">
                   <Link href="/">
-                    <p className="text-xl font-extrabold">Mesh Security</p>
+                    <a className="text-xl font-extrabold">Mesh Security</a>
                   </Link>
                 </div>
                 <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
