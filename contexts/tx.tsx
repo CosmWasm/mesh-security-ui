@@ -67,9 +67,8 @@ export function TxProvider({ children }: { children: ReactNode }) {
     } catch (e) {
       console.error(e)
       toaster.toast({
-        title: 'Error',
+        title: 'Request Rejected',
         dismissable: true,
-        message: 'An unexpected error has occured',
         type: ToastTypes.Error,
       })
       return

@@ -9,8 +9,8 @@ export const baseButtonClassNames = [
 ]
 
 export const buttonVariantClassNames = {
-  primary: 'text-white bg-primary-600 hover:bg-primary-700 shadow-sm',
-  secondary: 'text-black bg-white hover:bg-white/75 shadow-sm',
+  primary: 'text-white bg-primary-500 hover:bg-primary-600 shadow-sm',
+  secondary: 'text-white bg-slate-600/50 hover:bg-slate-500/25 shadow-sm',
   outline:
     'text-inherit bg-transparent border-black dark:border-white/25 dark:text-white hover:bg-neutral-50 dark:hover:bg-neutral-900',
   danger:

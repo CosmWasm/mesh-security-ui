@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { MeshClient } from 'client/core'
 import MeshContext from './MeshContext'
 import { chains } from 'chain-registry'
-import { useWallet, walletContext } from '@cosmos-kit/react'
+import { useWallet } from '@cosmos-kit/react'
 import denom from 'config/denom'
 import { getRpc } from 'util/chain'
 
@@ -35,7 +35,6 @@ export default function MeshClientProvider({
           currentWallet?.address,
           chainDenom,
         )
-        console.log('FETCHED BALANCE', balance)
       }
 
       const rpc = await getRpc(currentChain?.apis?.rpc as RpcInfo[])

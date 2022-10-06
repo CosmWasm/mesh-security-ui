@@ -1,4 +1,4 @@
-import { Button } from '@chakra-ui/react'
+import Button from './Button'
 
 interface Action {
   name: string
@@ -16,7 +16,7 @@ export default function Validator({ address, actions }: ValidatorProps) {
       <p className="text-sm font-semibold">{address}</p>
       <div className="flex flex-row space-x-2">
         {actions.map((action, key) => (
-          <Button key={key} onClick={action.onClick}>
+          <Button variant="secondary" key={key} onClick={action.onClick}>
             {action.name}
           </Button>
         ))}

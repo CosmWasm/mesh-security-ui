@@ -3,10 +3,10 @@ import { Dialog, Transition } from '@headlessui/react'
 import { XMarkIcon } from '@heroicons/react/24/outline'
 import Button, { BaseButtonTypes } from './Button'
 
-interface Action {
+export interface Action {
   button: BaseButtonTypes['variant']
   name: string
-  action: (val?: any) => void
+  action?: (val?: any) => void
 }
 
 const ActionButton = ({
@@ -14,11 +14,13 @@ const ActionButton = ({
   name,
   action,
   handleCloseModal,
+  submit,
 }: {
   button: Action['button']
   name: Action['name']
-  action: Action['action']
+  action?: Action['action']
   handleCloseModal: () => void
+  submit?: boolean
 }) => {
   return (
     <Button
@@ -26,8 +28,9 @@ const ActionButton = ({
       className="ml-2"
       onClick={() => {
         handleCloseModal()
-        action()
+        if (action) action()
       }}
+      type={submit ? 'submit' : 'button'}
     >
       {name}
     </Button>
@@ -60,8 +63,8 @@ export function Modal({
           <div className="fixed inset-0 transition-opacity bg-gray-800 bg-opacity-75" />
         </Transition.Child>
 
-        <div className="fixed inset-0 z-10 overflow-y-auto">
-          <div className="flex items-end justify-center min-h-full p-4 text-center sm:items-center sm:p-0">
+        <div className="fixed inset-0 z-50 overflow-y-auto">
+          <form className="flex items-end justify-center min-h-full p-4 text-center sm:items-center sm:p-0">
             <Transition.Child
               as={Fragment}
               enter="ease-out duration-300"
@@ -71,11 +74,11 @@ export function Modal({
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative z-50 px-4 pt-5 pb-4 overflow-hidden text-left transition-all transform bg-white border rounded-lg shadow-xl dark:bg-black border-white/10 sm:my-8 sm:w-full sm:max-w-lg sm:p-6">
+              <Dialog.Panel className="relative z-50 px-4 pt-5 pb-4 overflow-hidden text-left transition-all transform border rounded-lg shadow-xl bg-[#2E3748] border-white/10 sm:my-8 sm:w-full sm:max-w-lg sm:p-6">
                 <div className="absolute top-0 right-0 hidden pt-4 pr-4 sm:block">
                   <button
                     type="button"
-                    className="text-black bg-white rounded-md dark:text-white dark:bg-black hover:text-white/75 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ring-offset-white dark:ring-offset-black"
+                    className="rounded-md text-white bg-[#2E3748] hover:text-white/75 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ring-offset-white dark:ring-offset-black"
                     onClick={() => handleStateChange(false)}
                   >
                     <span className="sr-only">Close</span>
@@ -94,7 +97,7 @@ export function Modal({
                 </div>
               </Dialog.Panel>
             </Transition.Child>
-          </div>
+          </form>
         </div>
       </Dialog>
     </Transition.Root>

@@ -1,74 +1,7 @@
-import { useEffect, useState, useMemo } from 'react'
-import { useWallet } from '@cosmos-kit/react'
-import { assets } from 'chain-registry'
-import { AssetList, Asset } from '@chain-registry/types'
-
-import {
-  Box,
-  Divider,
-  Grid,
-  Heading,
-  Text,
-  Stack,
-  Container,
-  Link,
-  Button,
-  Flex,
-  Icon,
-  useColorMode,
-  useColorModeValue,
-} from '@chakra-ui/react'
-import { BsFillMoonStarsFill, BsFillSunFill } from 'react-icons/bs'
-import { dependencies, products } from '../config'
-
-import { WalletStatus } from '@cosmos-kit/core'
 import { Product, Dependency } from '../components'
 import Head from 'next/head'
-import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate'
-import { Coin } from 'cosmwasm'
 
 export default function Home() {
-  const { colorMode, toggleColorMode } = useColorMode()
-  const color = useColorModeValue('primary.500', 'primary.200')
-
-  // const {
-  //   getStargateClient,
-  //   getCosmWasmClient,
-  //   address,
-  //   setCurrentChain,
-  //   currentWallet,
-  //   walletStatus
-  // } = useWallet();
-
-  // useEffect(() => {
-  //   setCurrentChain(chainName);
-  // }, [chainName]);
-
-  // const color = useColorModeValue('primary.500', 'primary.200');
-
-  // // get cw20 balance
-  // const [client, setClient] = useState<SigningCosmWasmClient | null>(
-  //   null
-  // );
-
-  // useEffect(() => {
-  //   getCosmWasmClient().then((cosmwasmClient) => {
-  //     if (!cosmwasmClient || !address) {
-  //       console.error('stargateClient undefined or address undefined.');
-  //       return;
-  //     }
-  //     setClient(cosmwasmClient);
-  //   });
-  // }, [address, getCosmWasmClient]);
-  // const [bal, setBal] = useState<Coin | null>(null);
-  // useEffect(() => {
-  //   if (client && address) {
-  //     client
-  //       .getBalance(address, denom)
-  //       .then((b) => setBal(b));
-  //   }
-  // }, [client, address]);
-
   return (
     <div className="max-w-5xl py-10 mx-auto">
       <Head>

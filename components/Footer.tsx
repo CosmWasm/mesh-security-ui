@@ -1,6 +1,6 @@
 export default function Footer() {
   return (
-    <div className="flex justify-center pt-6 text-sm text-center border-t border-black/10 dark:border-white/10">
+    <div className="flex justify-center py-6 text-sm text-center border-t border-black/10 dark:border-white/10">
       <span className="flex flex-row items-center space-x-2">
         <p>Built with</p>
         <a

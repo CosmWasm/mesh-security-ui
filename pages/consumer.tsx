@@ -127,7 +127,6 @@ export default function Home() {
           fontSize={{ base: '2xl', sm: '3xl', md: '4xl' }}
         ></Heading>
       </Box>
-      <WalletSection chainName={chainName} />
       <div>
         {denom} Meta Staking @ {junoContracts.metaStakingAddr} :
         {walletStatus === WalletStatus.Disconnected

@@ -32,7 +32,7 @@ export const Navbar = ({ navigation, defaultChain }: NavbarProps) => {
       as="nav"
       className={classNames(
         scrollY > 0 ? 'bg-opacity-75 [backdrop-filter:blur(10px)]' : '',
-        'top-0 z-50 w-screen border-b sm:fixed sm:h-16 border-black/10 dark:border-white/10',
+        'top-0 z-10 w-screen border-b sm:fixed sm:h-16 border-black/10 dark:border-white/10',
       )}
     >
       {({ open }) => (
