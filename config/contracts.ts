@@ -1,12 +1,19 @@
 export const osmoContracts = {
-    meshLockupAddr: "osmo1kf88a6ftgt57t2hg48jfc9679l50tq6jqwsdheuld6467jls2hxstnvnal",
-    meshProviderAddr: "osmo19kx57u0nrhqas34qvyhu2ydt4a9rlj6n37l88jqwfc2eesuk9tuq6c6ywj",
-    meshProviderPort: "wasm.osmo19kx57u0nrhqas34qvyhu2ydt4a9rlj6n37l88jqwfc2eesuk9tuq6c6ywj",
-    meshSlasherAddr: "osmo1fewayl23e89rkejx932ljxf0ylsmtqc49r4myzzsvxcpweptmu0szshpkv"
-};
+  meshLockupAddr:
+    'osmo1nhenmvnx25v66ww0mzv6mgcyqzl963ld8cclyvyd0wqrukfnhr8s05tkkk',
+  meshProviderAddr:
+    'osmo1zexuk3sc3yy3dcd7vjj38swvxld822904z5g3eaautpn4lplustsn46ekd',
+  meshProviderPort:
+    'wasm.osmo1zexuk3sc3yy3dcd7vjj38swvxld822904z5g3eaautpn4lplustsn46ekd',
+  meshSlasherAddr:
+    'osmo1ddd4ve7pw3jampsz36mchzjxn9qpe2vlhvekvk5tem6fkxyu7y5s8529mu',
+}
 
 export const junoContracts = {
-    metaStakingAddr: "juno15tuw2fdyl666j7569ynt9dpdqykwzqw4d4sxrf0smcezudeafedsqu7n97",
-    meshConsumerAddr: "juno12e2p5rgcmcgu2t63mwystxzlfwf50kpgn9gjlnz2sf6q76pnkcjqrna22u",
-    meshConsumerPort: "wasm.juno12e2p5rgcmcgu2t63mwystxzlfwf50kpgn9gjlnz2sf6q76pnkcjqrna22u"
+  metaStakingAddr:
+    'juno15yv90485q2m44lhpx8tdm04mwydc7eju5x2rce9dc83kzkgj0whsn7n7q9',
+  meshConsumerAddr:
+    'juno1mrmfw5epmaystay5s3dyvkjspetfm8k2ufnf5s5tnpvnn9w0aj5sr4a3va',
+  meshConsumerPort:
+    'wasm.juno1mrmfw5epmaystay5s3dyvkjspetfm8k2ufnf5s5tnpvnn9w0aj5sr4a3va',
 }

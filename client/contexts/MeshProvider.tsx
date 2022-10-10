@@ -37,6 +37,8 @@ export default function MeshClientProvider({
         )
       }
 
+      console.log('FETCHED BALANCE', balance)
+
       const rpc = await getRpc(currentChain?.apis?.rpc as RpcInfo[])
 
       const client = new MeshClient({
