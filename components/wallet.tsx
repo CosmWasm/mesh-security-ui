@@ -6,6 +6,7 @@ import {
 } from '@heroicons/react/24/outline'
 import { useWallet } from '@cosmos-kit/react'
 import { ChainName, WalletStatus } from '@cosmos-kit/core'
+import { useRouter } from 'next/router'
 
 const buttons = {
   Disconnected: {
@@ -38,11 +39,19 @@ export const WalletButton = ({
   const walletManager = useWallet()
   const {
     connect,
+    disconnect,
     openView,
     setCurrentChain,
     walletStatus,
     currentWalletName,
   } = walletManager
+
+  const router = useRouter()
+
+  useEffect(() => {
+    disconnect()
+    if (chainName) setCurrentChain(chainName)
+  }, [router.asPath])
 
   useEffect(() => {
     if (chainName) setCurrentChain(chainName)

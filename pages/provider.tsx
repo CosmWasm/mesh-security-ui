@@ -373,7 +373,9 @@ export default function Home() {
               <LockClosedIcon className="w-5 h-5 text-black dark:text-white" />
               <p className="flex flex-row items-center font-medium uppercase">
                 {bonded ? (
-                  humanizeAmount(bonded.bonded)
+                  humanizeAmount(
+                    parseInt(bonded.bonded) - parseInt(bonded.free),
+                  )
                 ) : (
                   <Spinner className="w-4 h-4" />
                 )}{' '}
