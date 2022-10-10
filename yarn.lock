@@ -2252,6 +2252,26 @@
     react-dom "18.2.0"
     react-icons "^4.4.0"
 
+"@cosmos-kit/leap@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@cosmos-kit/leap/-/leap-0.1.0.tgz#27361fecfde14b2579cecd7a72752ea518e94353"
+  integrity sha512-5BPAm0lP4jq6yg1duT/f58UhYkFvK756t+Ac/b76Npn2v7BL6fQ+zECNK9wn9REULIZKjuUTM5CtLZMxwQHI6g==
+  dependencies:
+    "@babel/runtime" "^7.11.2"
+    "@chain-registry/keplr" "1.0.0"
+    "@chain-registry/types" "^0.11.0"
+    "@chakra-ui/react" "^2.2.9"
+    "@cosmos-kit/core" "^0.19.0"
+    "@emotion/react" "^11"
+    "@emotion/styled" "^11"
+    "@keplr-wallet/types" "^0.11.3"
+    "@keplr-wallet/wc-client" "^0.11.3"
+    "@walletconnect/client" "1.8.0"
+    events "3.3.0"
+    react "18.2.0"
+    react-dom "18.2.0"
+    react-icons "^4.4.0"
+
 "@cosmos-kit/react@0.18.1":
   version "0.18.1"
   resolved "https://registry.yarnpkg.com/@cosmos-kit/react/-/react-0.18.1.tgz#8aa52ad1501063d3a9407968d73807244838f1b8"

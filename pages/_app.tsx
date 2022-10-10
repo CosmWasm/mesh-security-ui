@@ -3,7 +3,6 @@ import type { AppProps } from 'next/app'
 import { WalletProvider } from '@cosmos-kit/react'
 import { ChakraProvider } from '@chakra-ui/react'
 import { defaultTheme } from '../config'
-import { wallets } from '@cosmos-kit/keplr'
 import { assets, chains } from 'chain-registry'
 import { getSigningCosmosClientOptions } from 'osmojs'
 import { GasPrice } from '@cosmjs/stargate'
@@ -15,6 +14,9 @@ import { MeshClientProvider } from 'client'
 import { Toaster } from 'react-hot-toast'
 import { TxProvider } from 'contexts/tx'
 import { useEffect } from 'react'
+
+import { wallets as keplr } from '@cosmos-kit/keplr'
+import { wallets as leap } from '@cosmos-kit/leap'
 
 function MeshSecurityApp({ Component, pageProps }: AppProps) {
   const signerOptions: SignerOptions = {
@@ -49,7 +51,7 @@ function MeshSecurityApp({ Component, pageProps }: AppProps) {
         <WalletProvider
           chains={chains}
           assetLists={assets}
-          wallets={wallets}
+          wallets={[...keplr, ...leap]}
           signerOptions={signerOptions}
           storageOptions={{
             disabled: true,
