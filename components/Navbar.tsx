@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { Disclosure } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 import { classNames } from 'util/css'
 import { WalletButton } from './Wallet'
 import Link from 'next/link'
-import { useWallet } from '@cosmos-kit/react'
+import { useRouter } from 'next/router'
 
 export interface NavigationItem {
   name: string
@@ -20,6 +20,13 @@ export interface NavbarProps {
 
 export const Navbar = ({ navigation, defaultChain }: NavbarProps) => {
   const [scrollY, setScrollY] = useState<number>(0)
+
+  const router = useRouter()
+
+  const chainName = useMemo(
+    () => navigation.find((n) => n.current)?.chain ?? defaultChain,
+    [router.asPath],
+  )
 
   useEffect(() => {
     const onScroll = (e: any) => setScrollY(e.target.documentElement.scrollTop)
@@ -74,19 +81,11 @@ export const Navbar = ({ navigation, defaultChain }: NavbarProps) => {
                 </div>
               </div>
               <div className="absolute inset-y-0 right-0 items-center hidden pr-2 sm:flex sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-                <WalletButton
-                  chainName={
-                    navigation.find((n) => n.current)?.chain ?? defaultChain
-                  }
-                />
+                <WalletButton chainName={chainName} />
               </div>
             </div>
             <div className="flex items-center pr-2 mb-2 sm:hidden sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-              <WalletButton
-                chainName={
-                  navigation.find((n) => n.current)?.chain ?? defaultChain
-                }
-              />
+              <WalletButton chainName={chainName} />
             </div>
           </div>
 

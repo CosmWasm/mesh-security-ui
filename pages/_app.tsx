@@ -51,6 +51,9 @@ function MeshSecurityApp({ Component, pageProps }: AppProps) {
           assetLists={assets}
           wallets={wallets}
           signerOptions={signerOptions}
+          storageOptions={{
+            disabled: true,
+          }}
         >
           <Toaster position="bottom-center" />
           <MeshClientProvider>

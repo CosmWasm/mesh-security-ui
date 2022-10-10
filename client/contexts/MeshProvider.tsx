@@ -1,11 +1,12 @@
 import type { RpcInfo } from 'util/chain'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { MeshClient } from 'client/core'
+import { ChainName, MeshClient } from 'client/core'
 import MeshContext from './MeshContext'
 import { chains } from 'chain-registry'
 import { useWallet } from '@cosmos-kit/react'
 import denom from 'config/denom'
 import { getRpc } from 'util/chain'
+import { useRouter } from 'next/router'
 
 export default function MeshClientProvider({
   children,
@@ -15,18 +16,39 @@ export default function MeshClientProvider({
   const [, updateState] = useState<{}>()
   const forceUpdate = useCallback(() => updateState({}), [])
 
+  const router = useRouter()
+
   const [client, setClient] = useState<MeshClient | null>(null)
 
-  const { currentChainName, currentWallet } = useWallet()
+  const { currentChainName, currentWallet, setCurrentChain } = useWallet()
 
   const currentChain = useMemo(
     () => chains.find((c) => c.chain_name === currentChainName),
     [currentChainName],
   )
 
+  const navigation = useMemo(
+    () => [
+      {
+        name: 'Provider',
+        href: '/provider',
+        current: router.asPath === '/provider',
+        chain: 'osmosistestnet',
+      },
+      {
+        name: 'Consumer',
+        href: '/consumer',
+        current: router.asPath === '/consumer',
+        chain: 'junotestnet',
+      },
+    ],
+    [router.asPath],
+  )
+
   useEffect(() => {
     async function effect() {
-      if (!currentChain) return
+      if (!currentChain || !navigation) return
+      setCurrentChain(navigation.find((n) => n.current)?.chain)
       let signingCosmWasmClient, balance, chainDenom
       if (currentWallet) {
         signingCosmWasmClient = await currentWallet.getCosmWasmClient()
@@ -57,17 +79,17 @@ export default function MeshClientProvider({
         signingCosmWasmClient: signingCosmWasmClient || null,
       })
 
-      client?.connect()
+      client?.connect(currentChainName as ChainName)
 
       setClient(client)
     }
 
     effect()
-  }, [currentWallet, currentChain])
+  }, [currentWallet, currentChain, router.asPath])
 
   const connectSigning = useCallback(async () => {
     if (client) {
-      client?.connectSigning()
+      client?.connectSigning(currentChainName as ChainName)
       forceUpdate()
     }
   }, [client, forceUpdate])
@@ -76,7 +98,7 @@ export default function MeshClientProvider({
   useEffect(() => {
     // Unsigned Client
     async function connectClient() {
-      await client?.connect()
+      await client?.connect(currentChainName as ChainName)
       forceUpdate()
     }
 
@@ -88,6 +110,7 @@ export default function MeshClientProvider({
       value={{
         client,
         connectSigning,
+        navigation,
       }}
     >
       {children}

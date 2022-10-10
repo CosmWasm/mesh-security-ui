@@ -72,7 +72,7 @@ export default function Home() {
 
   const updateBond = async (address: string) => {
     try {
-      await client?.connectSigning()
+      await client?.connectSigning('osmosistestnet')
       setBonded(null)
       const bonded = await client?.meshLockupClient.balance({
         account: address,

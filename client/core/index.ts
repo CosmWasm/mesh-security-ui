@@ -31,6 +31,8 @@ export interface MeshClientConstructor {
   signingCosmWasmClient: SigningCosmWasmClient | null
 }
 
+export type ChainName = 'junotestnet' | 'osmosistestnet'
+
 export class MeshClient {
   private _cosmWasmClient: CosmWasmClient | null = null
   public signingCosmWasmClient: SigningCosmWasmClient | null = null
@@ -59,7 +61,7 @@ export class MeshClient {
     this.signingCosmWasmClient = signingCosmWasmClient
   }
 
-  public async connect() {
+  public async connect(chain: ChainName) {
     // CosmWasm client already exists!
     if (this._cosmWasmClient) {
       return
@@ -69,18 +71,24 @@ export class MeshClient {
     this._cosmWasmClient = await connectCosmWasmClient(this.chain.rpc)
 
     // Create all contract clients
-    await this.createContractClients()
+    await this.createContractClients(chain)
   }
 
   // Asynchronously init every client at the same time
-  private async createContractClients() {
-    const initClients = [
-      this.createMeshConsumerClient,
-      this.createMeshLockupClient,
-      this.createMeshProviderClient,
-      this.createMeshSlasherClient,
-      this.createMetaStakingClient,
-    ].map(async (func) => {
+  private async createContractClients(chain: ChainName) {
+    if (!chain) return
+    const contracts = {
+      junotestnet: [
+        this.createMeshConsumerClient,
+        this.createMetaStakingClient,
+      ],
+      osmosistestnet: [
+        this.createMeshLockupClient,
+        this.createMeshProviderClient,
+        this.createMeshSlasherClient,
+      ],
+    }
+    const initClients = contracts[chain].map(async (func) => {
       return await func(this)
     })
 
@@ -127,7 +135,7 @@ export class MeshClient {
     return this._wallet as WalletData
   }
 
-  public async connectSigning() {
+  public async connectSigning(chain: ChainName) {
     try {
       if (!this.cosmWasmClient) {
         throw new Error('cosmWasmClient could not connect')
@@ -138,7 +146,7 @@ export class MeshClient {
       }
 
       // Create all contract clients
-      await this.createContractClients()
+      await this.createContractClients(chain)
 
       return this._wallet
     } catch (e) {
