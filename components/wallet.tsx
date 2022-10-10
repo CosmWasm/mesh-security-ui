@@ -1,181 +1,127 @@
-import { useWallet } from '@cosmos-kit/react';
+import { MouseEventHandler, useEffect, useMemo } from 'react'
 import {
-  Box,
-  Center,
-  Grid,
-  GridItem,
-  Icon,
-  Stack,
-  useColorModeValue,
-  Text
-} from '@chakra-ui/react';
-import { MouseEventHandler, useEffect, useMemo } from 'react';
-import { FiAlertTriangle } from 'react-icons/fi';
-import {
-  Astronaut,
-  Error,
-  Connected,
-  ConnectedShowAddress,
-  ConnectedUserInfo,
-  Connecting,
-  ConnectStatusWarn,
-  CopyAddressBtn,
-  Disconnected,
-  NotExist,
-  Rejected,
-  RejectedWarn,
-  WalletConnectComponent,
-  ChainCard
-} from '../components';
-import { getWalletPrettyName } from '@cosmos-kit/config';
-import { ChainName } from '@cosmos-kit/core';
-import { assets as chainAssets } from 'chain-registry';
+  ArrowPathIcon,
+  ArrowDownTrayIcon,
+  WalletIcon,
+} from '@heroicons/react/24/outline'
+import { useWallet } from '@cosmos-kit/react'
+import { ChainName, WalletStatus } from '@cosmos-kit/core'
+import { useRouter } from 'next/router'
 
-export const WalletSection = ({ chainName }: { chainName?: ChainName }) => {
-  const walletManager = useWallet();
+const buttons = {
+  Disconnected: {
+    icon: WalletIcon,
+    title: 'Connect Wallet',
+  },
+  Connected: {
+    icon: WalletIcon,
+    title: 'My Wallet',
+  },
+  Rejected: {
+    icon: ArrowPathIcon,
+    title: 'Reconnect',
+  },
+  Error: {
+    icon: ArrowPathIcon,
+    title: 'Change Wallet',
+  },
+  NotExist: {
+    icon: ArrowDownTrayIcon,
+    title: 'Install Wallet',
+  },
+}
+
+export const WalletButton = ({
+  chainName = process.env.NEXT_PUBLIC_CHAIN!,
+}: {
+  chainName?: ChainName
+}) => {
+  const walletManager = useWallet()
   const {
     connect,
+    disconnect,
     openView,
     setCurrentChain,
     walletStatus,
-    username,
-    address,
-    message,
     currentWalletName,
-    chains
-  } = walletManager;
+  } = walletManager
 
-  const chainOptions = useMemo(
-    () =>
-      chains.map((chainRecord) => {
-        const assets = chainAssets.find(
-          (_chain) => _chain.chain_name === chainRecord.name
-        )?.assets;
-        return {
-          chainName: chainRecord.name,
-          label: chainRecord.chain.pretty_name,
-          value: chainRecord.name,
-          icon: assets
-            ? assets[0]?.logo_URIs?.svg || assets[0]?.logo_URIs?.png
-            : undefined,
-          disabled: false
-        };
-      }),
-    [chains]
-  );
-
-  const chain = chainOptions.find((c) => c.chainName === chainName);
+  const router = useRouter()
 
   useEffect(() => {
-    setCurrentChain(chainName);
-  }, [chainName, setCurrentChain]);
+    disconnect()
+    if (chainName) setCurrentChain(chainName)
+  }, [router.asPath])
+
+  useEffect(() => {
+    if (chainName) setCurrentChain(chainName)
+  }, [chainName, setCurrentChain])
 
   // Events
   const onClickConnect: MouseEventHandler = async (e) => {
-    e.preventDefault();
-    openView();
+    e.preventDefault()
+    openView()
     if (currentWalletName) {
-      await connect();
+      await connect()
     }
-  };
+  }
 
   const onClickOpenView: MouseEventHandler = (e) => {
-    e.preventDefault();
-    openView();
-  };
+    e.preventDefault()
+    openView()
+  }
 
-  // Components
-  const connectWalletButton = (
-    <WalletConnectComponent
-      walletStatus={walletStatus}
-      disconnect={
-        <Disconnected buttonText="Connect Wallet" onClick={onClickConnect} />
-      }
-      connecting={<Connecting />}
-      connected={
-        <Connected buttonText={'My Wallet'} onClick={onClickOpenView} />
-      }
-      rejected={<Rejected buttonText="Reconnect" onClick={onClickConnect} />}
-      error={<Error buttonText="Change Wallet" onClick={onClickOpenView} />}
-      notExist={
-        <NotExist buttonText="Install Wallet" onClick={onClickOpenView} />
-      }
-    />
-  );
-
-  const connectWalletWarn = (
-    <ConnectStatusWarn
-      walletStatus={walletStatus}
-      rejected={
-        <RejectedWarn
-          icon={<Icon as={FiAlertTriangle} mt={1} />}
-          wordOfWarning={`${getWalletPrettyName(
-            currentWalletName
-          )}: ${message}`}
-        />
-      }
-      error={
-        <RejectedWarn
-          icon={<Icon as={FiAlertTriangle} mt={1} />}
-          wordOfWarning={`${getWalletPrettyName(
-            currentWalletName
-          )}: ${message}`}
-        />
-      }
-    />
-  );
-
-  const userInfo = (
-    <ConnectedUserInfo username={username} icon={<Astronaut />} />
-  );
-  const addressBtn = chainName && (
-    <CopyAddressBtn
-      walletStatus={walletStatus}
-      connected={<ConnectedShowAddress address={address} isLoading={false} />}
-    />
-  );
-
-  return (
-    <Center py={16}>
-      <Grid
-        w="full"
-        maxW="sm"
-        templateColumns="1fr"
-        rowGap={4}
-        alignItems="center"
-        justifyContent="center"
-      >
-        {chainName && (
-          <GridItem marginBottom={'20px'}>
-            <ChainCard
-              prettyName={chain?.label || chainName}
-              icon={chain?.icon}
-            />
-          </GridItem>
-        )}
-        <GridItem px={6}>
-          <Stack
-            justifyContent="center"
-            alignItems="center"
-            borderRadius="lg"
-            bg={useColorModeValue('white', 'blackAlpha.400')}
-            boxShadow={useColorModeValue(
-              '0 0 2px #dfdfdf, 0 0 6px -2px #d3d3d3',
-              '0 0 2px #363636, 0 0 8px -2px #4f4f4f'
-            )}
-            spacing={4}
-            px={4}
-            py={{ base: 6, md: 12 }}
+  const _renderConnectButton = useMemo(() => {
+    // Spinner
+    if (walletStatus === WalletStatus.Connecting) {
+      return (
+        <button className="rounded-lg w-full bg-primary-500 hover:bg-primary-500/75 inline-flex justify-center items-center py-2.5 font-medium cursor-wait text-white">
+          <svg
+            className="w-5 h-5 text-white animate-spin"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
           >
-            {userInfo}
-            {addressBtn}
-            <Box w="full" maxW={{ base: 52, md: 64 }}>
-              {connectWalletButton}
-            </Box>
-            <GridItem>{connectWalletWarn}</GridItem>
-          </Stack>
-        </GridItem>
-      </Grid>
-    </Center>
-  );
-};
+            <circle
+              className="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              strokeWidth="4"
+            ></circle>
+            <path
+              className="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            ></path>
+          </svg>
+        </button>
+      )
+    }
+
+    let onClick
+    if (
+      walletStatus === WalletStatus.Disconnected ||
+      walletStatus === WalletStatus.Rejected
+    )
+      onClick = onClickConnect
+    else onClick = onClickOpenView
+
+    const buttonData = buttons[walletStatus]
+
+    return (
+      <button
+        className="rounded-lg bg-primary-500 px-6 w-full hover:bg-primary-600 inline-flex justify-center items-center py-1.5 font-medium text-white"
+        onClick={onClick}
+      >
+        <buttonData.icon className="flex-shrink-0 w-5 h-5 mr-2 text-white" />
+        {buttonData.title}
+      </button>
+    )
+  }, [walletStatus])
+
+  return _renderConnectButton
+}
+
+export default WalletButton

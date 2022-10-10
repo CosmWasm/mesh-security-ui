@@ -6,33 +6,45 @@
 
 import * as _0 from "./HackCw20.types";
 import * as _1 from "./HackCw20.client";
-import * as _2 from "./MeshConsumer.types";
-import * as _3 from "./MeshConsumer.client";
-import * as _4 from "./MeshLockup.types";
-import * as _5 from "./MeshLockup.client";
-import * as _6 from "./MeshProvider.types";
-import * as _7 from "./MeshProvider.client";
-import * as _8 from "./MeshSlasher.types";
-import * as _9 from "./MeshSlasher.client";
-import * as _10 from "./MetaStaking.types";
-import * as _11 from "./MetaStaking.client";
+import * as _2 from "./HackCw20.message-composer";
+import * as _3 from "./MeshConsumer.types";
+import * as _4 from "./MeshConsumer.client";
+import * as _5 from "./MeshConsumer.message-composer";
+import * as _6 from "./MeshLockup.types";
+import * as _7 from "./MeshLockup.client";
+import * as _8 from "./MeshLockup.message-composer";
+import * as _9 from "./MeshProvider.types";
+import * as _10 from "./MeshProvider.client";
+import * as _11 from "./MeshProvider.message-composer";
+import * as _12 from "./MeshSlasher.types";
+import * as _13 from "./MeshSlasher.client";
+import * as _14 from "./MeshSlasher.message-composer";
+import * as _15 from "./MetaStaking.types";
+import * as _16 from "./MetaStaking.client";
+import * as _17 from "./MetaStaking.message-composer";
 export namespace contracts {
   export const HackCw20 = { ..._0,
-    ..._1
+    ..._1,
+    ..._2
   };
-  export const MeshConsumer = { ..._2,
-    ..._3
-  };
-  export const MeshLockup = { ..._4,
+  export const MeshConsumer = { ..._3,
+    ..._4,
     ..._5
   };
-  export const MeshProvider = { ..._6,
-    ..._7
+  export const MeshLockup = { ..._6,
+    ..._7,
+    ..._8
   };
-  export const MeshSlasher = { ..._8,
-    ..._9
-  };
-  export const MetaStaking = { ..._10,
+  export const MeshProvider = { ..._9,
+    ..._10,
     ..._11
+  };
+  export const MeshSlasher = { ..._12,
+    ..._13,
+    ..._14
+  };
+  export const MetaStaking = { ..._15,
+    ..._16,
+    ..._17
   };
 }
